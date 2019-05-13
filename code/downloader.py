@@ -10,15 +10,16 @@ class Downloader(object):
     def __init__(
         self,
         cookie,
-        download_path=os.environ.get('FILE_PATH', './data'),
-        pk='BCpkADawqM2OOcM6njnM7hf9EaK6lIFlqiXB0iWjqGWUQjU7R8965xUvIQNqdQbnDTLz0IAO7E6Ir2rIbXJtFdzrGtitoee0n1XXRliD-RH9A-svuvNW9qgo3Bh34HEZjXjG4Nml4iyz3KqF',
-        brightcove_account_id=3695997568001,
+        download_path ,
+        pk='BCpkADawqM2OOcM6njnM7hf9EaK6lIFlqiXB0iWjqGWUQjU7R8965xUvIQNqdQbnDTLz0IAO7E6Ir2rIbXJtFdzrGtitoee0n1XXRliD-RH9A-svuvNW9qgo3Bh34HEZjXjG4Nml4iyz3KqF' ,
+        brightcove_account_id=3695997568001
     ):
         self.cookie = cookie.strip().strip('"')
         self.download_path = download_path
         self.pk = pk.strip()
         self.brightcove_account_id = brightcove_account_id
         self.pythonversion = 3 if sys.version_info >= (3, 0) else 2
+        self.ext_downloader = " --external-downloader aria2c  --external-downloader-args '-j1 -x16 -s16 -k1M'"
 
     def is_unicode_string(self, string):
         if (self.pythonversion == 3 and isinstance(string, str)) or (self.pythonversion == 2 and isinstance(string, unicode)):
@@ -143,26 +144,30 @@ class Downloader(object):
 
         print('Downloading {}...'.format(fpath))
 
-        if os.path.exists(fpath):
-            print('Video already downloaded, skipping...')
-            return
+        url = '"' + dl_url  + '"'
+        output = ' -o ' + '"' + fpath  + '"'
+        os.system('youtube-dl --no-check-certificate' + output + ' ' + url + self.ext_downloader)
 
-        with open(fpath, 'wb') as f:
-            response = requests.get(dl_url, allow_redirects=True, stream=True)
-            total_length = response.headers.get('content-length')
+        # if os.path.exists(fpath):
+        #     print('Video already downloaded, skipping...')
+        #     return
+        #
+        # with open(fpath, 'wb') as f:
+        #     response = requests.get(dl_url, allow_redirects=True, stream=True)
+        #     total_length = response.headers.get('content-length')
+        #
+        #     if not total_length:
+        #         f.write(response.content)
+        #
+        #     else:
+        #         dl = 0
+        #         total_length = int(total_length)
+        #
+        #         for data in response.iter_content(chunk_size=4096):
+        #             dl += len(data)
+        #             f.write(data)
+        #             done = int(50 * dl / total_length)
+        #             sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50 - done)))
+        #             sys.stdout.flush()
 
-            if not total_length:
-                f.write(response.content)
-
-            else:
-                dl = 0
-                total_length = int(total_length)
-
-                for data in response.iter_content(chunk_size=4096):
-                    dl += len(data)
-                    f.write(data)
-                    done = int(50 * dl / total_length)
-                    sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50 - done)))
-                    sys.stdout.flush()
-
-            print('')
+        # print('')

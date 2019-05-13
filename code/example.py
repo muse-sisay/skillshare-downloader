@@ -1,10 +1,11 @@
 from downloader import Downloader
 
-cookie = """
-ADD YOUR COOKIE HERE
-"""
+cookie = ''
 
-dl = Downloader(cookie=cookie)
+# Download path
+course_folder = ''
+
+dl = Downloader(cookie=cookie , download_path= course_folder)
 
 # download by class URL:
 dl.download_course_by_url('https://www.skillshare.com/classes/Art-Fundamentals-in-One-Hour/189505397')
